@@ -1,28 +1,5 @@
 <?php
 include("session.php");
-if(isset($_POST['search']))
-{
-    $matricnumber = $_POST['matricnumber'];
-    // search in all table columns
-    // using concat mysql function
-    $query = "SELECT * FROM `students` WHERE CONCAT(`id`, `matricnumber`, `name`, `icnumber`, `registrationstatus`, 
-	`dob`, `gender`, `religion`,`nationality`, `phonenumber`, `email`, `address`, `faculty`, `programme`, `dateofenroll`, `gpa`) LIKE '%".$matricnumber."%'";
-    $search_result = filterTable($query);
-    
-}
- else {
-    $query = "SELECT * FROM `students`";
-    $search_result = filterTable($query);
-}
-
-// function to connect and execute the query
-function filterTable($query)
-{
-    $connect = mysqli_connect("localhost", "root", "", "fyp");
-    $filter_Result = mysqli_query($connect, $query);
-    return $filter_Result;
-}
-
 ?>
 
 
@@ -158,8 +135,8 @@ function filterTable($query)
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="index.html" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a></li>
 						<li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="search.php" aria-expanded="false"><i class="mdi mdi-account-search"></i><span class="hide-menu">Search</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="create.php" aria-expanded="false"><i class="mdi mdi-account-plus"></i><span class="hide-menu">Add</span></a></li>
-                    	<li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="logs.php" aria-expanded="false"><i class="m-r-10 mdi mdi-book-open"></i><span class="hide-menu">Audit Logs</span></a></li>
-					</ul>
+						<li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="logs.php" aria-expanded="false"><i class="m-r-10 mdi mdi-book-open"></i><span class="hide-menu">Audit Logs</span></a></li>
+                    </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
             </div>
@@ -178,7 +155,7 @@ function filterTable($query)
             <div class="page-breadcrumb">
                 <div class="row">
                     <div class="col-12 d-flex no-block align-items-center">
-                        <h4 class="page-title">Students Information</h4>
+                        <h4 class="page-title">Audit Logs</h4>
                         
                     </div>
                 </div>
@@ -193,83 +170,39 @@ function filterTable($query)
                 <!-- ============================================================== -->
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
-                <div class="card">
-                            <div class="card-body">
-							<form id="search" action="search.php" method="post">
-            <input type="text" name="matricnumber" placeholder="Enter Matric Number"><br><br>
-            <input type="submit" name="search" value="Search"><br><br>
-                                <h5 class="card-title">Students Information</h5>
-                                <div class="table-responsive">
-            
-                                    <table id="zero_config" class="table table-striped table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Id</th>
-                                                <th>Matric Number </th>
-                                                <th>Student Name</th>
-                                                <th>IC Number</th>
-                                                <th>Registration Status</th>
-                                                <th>Date of Birth</th>
-                                                <th>Gender</th>
-                                                <th>Religion</th>
-                                                <th>Nationality</th>
-                                                <th>Phone Number</th>
-                                                <th>Email</th>
-                                                <th>Address</th>
-                                                <th>Faculty</th>
-                                                <th>Programme</th>
-                                                <th>Date of Enroll</th>
-                                                <th>GPA</th>
-                                                <th>Edit</th>
-                                                <th>Delete</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php 
-                $count=1;
-                while($row = mysqli_fetch_array($search_result)):?>
-                <tr>
-                    <td><?php echo $count; ?></td>
-                    <td><?php echo $row['matricnumber'];?></td>
-                    <td><?php echo $row['name'];?></td>
-                    <td><?php echo $row['icnumber'];?></td>
-                    <td><?php echo $row['registrationstatus'];?></td>
-                    <td><?php echo $row['dob'];?></td>
-                    <td><?php echo $row['gender'];?></td>
-                    <td><?php echo $row['religion'];?></td>
-                    <td><?php echo $row['nationality'];?></td>
-                    <td><?php echo $row['phonenumber'];?></td>
-                    <td><?php echo $row['email'];?></td>
-                    <td><?php echo $row['address'];?></td>
-                    <td><?php echo $row['faculty'];?></td>
-                    <td><?php echo $row['programme'];?></td>
-                    <td><?php echo $row['dateofenroll'];?></td>
-					<td><button style="border-radius: 8px;" type="button" class="btn btn-success" data-toggle="modal" data-target="#mediumModal"><a href="popup.php?matricnumber=<?php echo $row["matricnumber"];?>">Mark</button></td>
-                 
-                    <td align="center"><a href="edit.php?id=<?php echo $row["id"]; ?>">Edit</a></td>
-					
-<td align="center">
- <!-- Delete Buttion -->
- <input type="button" onClick="deleteme(<?php echo $row['id']; ?>)" name="Delete" value="Delete"></td>
- </tr>
- <!-- Javascript function for deleting data -->
- <script language="javascript">
- function deleteme(delid)
- {
-    if(confirm("Do you want Delete!")){
-    window.location.href='delete.php?del_id=' +delid+'';
-    return true;
-     }
- } 
- </script>
-                    <?php $count++; ?>
-                </tr>
-                <?php endwhile;?>
-                                        </tbody>
+                 <button class="btn btn-info" titlt="print screen" alt="print screen" onclick="window.print();"target="_blank" style="cursor:pointer;">Print</button>
 
+<div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+
+                                    <table id="zero_config" class="table table-striped table-bordered">
+<thead>
+								     
+                                    <tr>
+												<th>ID</th>
+												<th>Username</th>
+												<th>Login Time</th>
+
+                                    </tr>
+                                  </thead>
+								  <body>
+                  <?php
+$connection = mysql_connect('localhost', 'root', ''); //The Blank string is the password
+mysql_select_db('fyp');
+
+$query = "SELECT * FROM userlog ORDER BY `id` DESC"; //You don't need a ; like you do in SQL
+$result = mysql_query($query);
+
+while($row = mysql_fetch_array($result)){   //Creates a loop to loop through results
+echo "<tr><td>" . $row['id'] . "</td><td>" . $row['username'] . "</td><td>" . $row['loginTime'] . "</td></tr>";  //$row['index'] the index here is a field name
+}
+
+mysql_close(); //Make sure to close out the database connection
+?>
+</body>
                                     </table>
                                 </div>
-
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,14 @@
 <?php
   session_start();
+
   include("simple-php-captcha.php");
   $_SESSION['captcha'] = simple_php_captcha();
+  error_reporting(0);
+		$day  = date("l");
+$current_date = date("Y-m-d");
+date_default_timezone_set("Asia/Kuala_Lumpur");
+$current_time = date("H:i");
+echo "$day&nbsp&nbsp$current_date&nbsp&nbsp$current_time"; 
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,6 +31,40 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
+<script type="text/javascript">
+var login_attempts=3;
+function check_form()
+{
+ var username=document.getElementById("username").value;
+ var password=document.getElementById("password").value;
+ if($username == $table_users && $password == $table_password)
+ {
+  alert("SuccessFully Logged In");
+  document.getElementById("username").value="";
+  document.getElementById("password").value="";
+ }
+ else
+ {
+  if(login_attempts==0)
+  {
+   alert("No Login Attempts Available");
+  }
+  else
+  {
+   login_attempts=login_attempts-1;
+   alert("Login Failed Now Only "+login_attempts+" Login Attempts Available");
+   if(login_attempts==0)
+   {
+    document.getElementById("username").disabled=true;
+    document.getElementById("password").disabled=true;
+    document.getElementById("form1").disabled=true;
+   }
+  }
+ }
+ 
+ return false;
+}	
+</script>
 </head>
 
 <body>
@@ -48,12 +89,19 @@
                 <div id="loginform">
                     
                     <!-- Form -->
-                    <form method="POST" class="form-horizontal m-t-20" action="checklogin.php">
-                        <div class="row p-b-30">
+                    <form id ="form1" method="POST" class="form-horizontal m-t-20" action="checklogin.php" onsubmit="return check_form();">
+                        
+                               
+                            
+								<div class="row p-b-30">
                             <div class="col-12">
                                 <div class="input-group mb-3">
                                     
                                     <input type="text" class="form-control form-control-lg" name="username" placeholder="Username" required>
+                                </div>
+								 <div class="input-group mb-3">
+                                    
+                                    <input type="password" class="form-control form-control-lg" name="rfidtag" placeholder="rfidtag" required>
                                 </div>
                                 <div class="input-group mb-3">
                                     
@@ -62,7 +110,7 @@
                                     <div class="input-group mb-3">
                                     <input type="text" class="form-control form-control-lg" name="captcha" placeholder="Captcha" required>
                                     <?php echo '<img src="'.$_SESSION['captcha']['image_src'].'"alt="CAPTCHA code">';?><br>
-
+									
                                 </div>
                             </div>
                         </div>
@@ -70,7 +118,7 @@
                             <div class="col-12">
                                 <div class="form-group">
                                     <div class="p-t-20">
-                                        <button class="btn btn-info" id="to-recover" type="button"><i class="fa fa-lock m-r-5"></i> Lost password?</button>
+                                        <button class="btn btn-info" type="button" ><a href="register.php"><i class="m-r-10 mdi mdi-account-multiple-plus"></i>Register</button>
                                         <button class="btn btn-success float-right" name ="login" type="submit">Login</button>
                                     </div>
                                 </div>
@@ -78,30 +126,7 @@
                         </div>
                     </form>
                 </div>
-                <div id="recoverform">
-                    <div class="text-center">
-                        <span class="text-white">Enter your e-mail address below and we will send you instructions how to recover a password.</span>
-                    </div>
-                    <div class="row m-t-20">
-                        <!-- Form -->
-                        <form class="col-12" action="index.html">
-                            <!-- email -->
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-danger text-white" id="basic-addon1"><i class="ti-email"></i></span>
-                                </div>
-                                <input type="text" class="form-control form-control-lg" placeholder="Email Address" aria-label="Username" aria-describedby="basic-addon1">
-                            </div>
-                            <!-- pwd -->
-                            <div class="row m-t-20 p-t-20 border-top border-secondary">
-                                <div class="col-12">
-                                    <a class="btn btn-success" href="#" id="to-login" name="action">Back To Login</a>
-                                    <button class="btn btn-info float-right" type="button" name="action">Recover</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                
             </div>
         </div>
         <!-- ============================================================== -->

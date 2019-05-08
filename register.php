@@ -50,34 +50,35 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-success text-white" id="basic-addon1"></i></span>
                                     </div>
-                                    <input type="text" class="form-control form-control-lg" name="username" placeholder="Username" required>
+                                    <input type="text" class="form-control form-control-lg" maxlength="50" name="username" placeholder="Username" required>
                                 </div>
                                 <!-- password -->
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-warning text-white" id="basic-addon2"></span>
                                     </div>
-                                    <input type="password" class="form-control form-control-lg" name="password" placeholder="Password" required>
+                                    <input type="password" class="form-control form-control-lg" maxlength="50" name="password" placeholder="Password" required>
                                 </div>
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-info text-white" id="basic-addon2"></span>
                                     </div>
-                                    <input type="password" class="form-control form-control-lg" name="repeatpass" placeholder=" Confirm Password" required>
+                                    <input type="password" class="form-control form-control-lg" maxlength="50" name="repeatpass" placeholder=" Confirm Password" required>
                                 </div>
 								 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text bg-primary text-white" id="basic-addon2"></span>
                                     </div>
-                                    <input type="text" class="form-control form-control-lg" name="rfidtag" placeholder="RFID Tag" required>
+                                    <input type="text" class="form-control form-control-lg" pattern="\d{10}" maxlength="10" name="rfidtag" placeholder="RFID Tag" required>
                                 </div>
                             </div>
                         </div>
-                        <div class="row border-top border-secondary">
+                         <div class="row border-top border-secondary">
                             <div class="col-12">
                                 <div class="form-group">
                                     <div class="p-t-20">
-                                        <center><input type="submit" class="btn btn-success btn-sm" value="Register"/></center>
+                                        <button class="btn btn-info" type="button" ><a href="login.php"><i class="m-r-10 mdi mdi-lock-open-outline"></i>Login</button>
+                                        <button class="btn btn-success float-right" name ="register" type="submit">Register</button>
                                     </div>
                                 </div>
                             </div>

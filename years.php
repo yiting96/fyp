@@ -1,31 +1,14 @@
+
 <?php
+include("config.php");
+$db = db_connect();
 include("session.php");
-if(isset($_POST['search']))
-{
-    $matricnumber = $_POST['matricnumber'];
-    // search in all table columns
-    // using concat mysql function
-    $query = "SELECT * FROM `students` WHERE CONCAT(`id`, `matricnumber`, `name`, `icnumber`, `registrationstatus`, 
-	`dob`, `gender`, `religion`,`nationality`, `phonenumber`, `email`, `address`, `faculty`, `programme`, `dateofenroll`, `gpa`) LIKE '%".$matricnumber."%'";
-    $search_result = filterTable($query);
-    
-}
- else {
-    $query = "SELECT * FROM `students`";
-    $search_result = filterTable($query);
-}
-
-// function to connect and execute the query
-function filterTable($query)
-{
-    $connect = mysqli_connect("localhost", "root", "", "fyp");
-    $filter_Result = mysqli_query($connect, $query);
-    return $filter_Result;
-}
-
+$result = mysqli_query($mysqli, "SELECT * FROM examinationresult ORDER BY id DESC"); // using mysqli_query instead
+$matricnumber=$_REQUEST['matricnumber'];
+$query = "SELECT * from examinationresult where matricnumber='".$matricnumber."'"; 
 ?>
 
-
+	
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 
@@ -38,9 +21,10 @@ function filterTable($query)
     <meta name="author" content="">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png">
-    <title>Homepage</title>
+    <title>Result</title>
     <!-- Custom CSS -->
-    <link href="assets/libs/flot/css/float-chart.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/extra-libs/multicheck/multicheck.css">
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
     <link href="dist/css/style.min.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -76,9 +60,8 @@ function filterTable($query)
                     <!-- Logo -->
                     <!-- ============================================================== -->
                     <a class="navbar-brand" href="index.html">
-                        <p>Welcome <?php echo  $_SESSION['user'] ?></p>
-						
-						
+                        <!-- Logo icon -->
+                        <!-- Logo icon -->
                         <!-- <b class="logo-icon"> -->
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
@@ -107,7 +90,7 @@ function filterTable($query)
                         <!-- ============================================================== -->
                         <!-- create new -->
                         <!-- ============================================================== -->
-                       
+                        
                         <!-- ============================================================== -->
                         <!-- Search -->
                         <!-- ============================================================== -->
@@ -120,7 +103,7 @@ function filterTable($query)
                         <!-- ============================================================== -->
                         <!-- Comment -->
                         <!-- ============================================================== -->
-                        
+                       
                         <!-- ============================================================== -->
                         <!-- End Comment -->
                         <!-- ============================================================== -->
@@ -135,7 +118,9 @@ function filterTable($query)
                         <!-- ============================================================== -->
                         <!-- User profile and search -->
                         <!-- ============================================================== -->
-                         <a  href="logout.php"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+                       
+                                <a href="logout.php"><i class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+                   
                         <!-- ============================================================== -->
                         <!-- User profile and search -->
                         <!-- ============================================================== -->
@@ -158,8 +143,9 @@ function filterTable($query)
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="index.html" aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span></a></li>
 						<li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="search.php" aria-expanded="false"><i class="mdi mdi-account-search"></i><span class="hide-menu">Search</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="create.php" aria-expanded="false"><i class="mdi mdi-account-plus"></i><span class="hide-menu">Add</span></a></li>
-                    	<li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="logs.php" aria-expanded="false"><i class="m-r-10 mdi mdi-book-open"></i><span class="hide-menu">Audit Logs</span></a></li>
-					</ul>
+						<li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="logs.php" aria-expanded="false"><i class="m-r-10 mdi mdi-book-open"></i><span class="hide-menu">Audit Logs</span></a></li>
+
+                    </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
             </div>
@@ -178,7 +164,7 @@ function filterTable($query)
             <div class="page-breadcrumb">
                 <div class="row">
                     <div class="col-12 d-flex no-block align-items-center">
-                        <h4 class="page-title">Students Information</h4>
+                        <h4 class="page-title">Student Marks</h4>
                         
                     </div>
                 </div>
@@ -193,86 +179,58 @@ function filterTable($query)
                 <!-- ============================================================== -->
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
-                <div class="card">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
                             <div class="card-body">
-							<form id="search" action="search.php" method="post">
-            <input type="text" name="matricnumber" placeholder="Enter Matric Number"><br><br>
-            <input type="submit" name="search" value="Search"><br><br>
-                                <h5 class="card-title">Students Information</h5>
-                                <div class="table-responsive">
-            
-                                    <table id="zero_config" class="table table-striped table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Id</th>
-                                                <th>Matric Number </th>
-                                                <th>Student Name</th>
-                                                <th>IC Number</th>
-                                                <th>Registration Status</th>
-                                                <th>Date of Birth</th>
-                                                <th>Gender</th>
-                                                <th>Religion</th>
-                                                <th>Nationality</th>
-                                                <th>Phone Number</th>
-                                                <th>Email</th>
-                                                <th>Address</th>
-                                                <th>Faculty</th>
-                                                <th>Programme</th>
-                                                <th>Date of Enroll</th>
-                                                <th>GPA</th>
-                                                <th>Edit</th>
-                                                <th>Delete</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php 
-                $count=1;
-                while($row = mysqli_fetch_array($search_result)):?>
-                <tr>
-                    <td><?php echo $count; ?></td>
-                    <td><?php echo $row['matricnumber'];?></td>
-                    <td><?php echo $row['name'];?></td>
-                    <td><?php echo $row['icnumber'];?></td>
-                    <td><?php echo $row['registrationstatus'];?></td>
-                    <td><?php echo $row['dob'];?></td>
-                    <td><?php echo $row['gender'];?></td>
-                    <td><?php echo $row['religion'];?></td>
-                    <td><?php echo $row['nationality'];?></td>
-                    <td><?php echo $row['phonenumber'];?></td>
-                    <td><?php echo $row['email'];?></td>
-                    <td><?php echo $row['address'];?></td>
-                    <td><?php echo $row['faculty'];?></td>
-                    <td><?php echo $row['programme'];?></td>
-                    <td><?php echo $row['dateofenroll'];?></td>
-					<td><button style="border-radius: 8px;" type="button" class="btn btn-success" data-toggle="modal" data-target="#mediumModal"><a href="popup.php?matricnumber=<?php echo $row["matricnumber"];?>">Mark</button></td>
-                 
-                    <td align="center"><a href="edit.php?id=<?php echo $row["id"]; ?>">Edit</a></td>
-					
-<td align="center">
- <!-- Delete Buttion -->
- <input type="button" onClick="deleteme(<?php echo $row['id']; ?>)" name="Delete" value="Delete"></td>
- </tr>
- <!-- Javascript function for deleting data -->
- <script language="javascript">
- function deleteme(delid)
- {
-    if(confirm("Do you want Delete!")){
-    window.location.href='delete.php?del_id=' +delid+'';
-    return true;
-     }
- } 
- </script>
-                    <?php $count++; ?>
-                </tr>
-                <?php endwhile;?>
-                                        </tbody>
-
-                                    </table>
-                                </div>
-
+                                <h5 class="card-title m-b-0"></h5>
+								<button style="border-radius: 8px;" type="button" class="btn btn-success" data-toggle="modal" data-target="#mediumModal">Add New Data</button>
                             </div>
+                            <table class="table">
+                                  <thead>
+								     
+                                    <tr>
+												<th>Course Name</th>
+												<th>Course Code</th>
+												<th>test</th>
+                                                <th>quiz</th>
+                                                <th>Assignment (COGNITIVE)</th>
+												<th>Lab (PSYCHOMOTOR)</th>
+                                                <th>Project (AFFECTIVE)</th>
+                                                <th>Project (COGNITIVE)</th>
+                                                <th>Project (PSYCHOMOTOR)</th>
+												<th>Total Marks</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+								  <?php  	  
+									 $qlist = "SELECT * FROM examinationresult WHERE matricnumber='".$_GET['matricnumber']."'"; 
+									$reslist = $db->query($qlist);
+									
+									while($rowlist = $reslist->fetch_assoc()) {        
+									echo "<tr>";
+									
+									echo "<td style='width:10%' align='center'>".$rowlist['coursename']."</td>";
+									echo "<td style='width:10%' align='center'>".$rowlist['coursecode']."</td>";
+									echo "<td style='width:10%' align='center'>".$rowlist['test']."</td>";
+									echo "<td style='width:10%' align='center'>".$rowlist['quiz']."</td>";
+									echo "<td style='width:10%' align='center'>".$rowlist['assignment']."</td>"; 
+									echo "<td style='width:10%' align='center'>".$rowlist['lab']."</td>";   									
+									echo "<td style='width:10%' align='center'>".$rowlist['projectA']."</td>";
+									echo "<td style='width:10%' align='center'>".$rowlist['projectC']."</td>";
+									echo "<td style='width:10%' align='center'>".$rowlist['projectP']."</td>";
+									echo "<td style='width:10%' align='center'>".$rowlist['sum']."</td>";
+								}
+								?>
+ 
+  
+
+                                   
+                                  </tbody>
+                            </table>
                         </div>
                     </div>
+                </div>
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
                 <!-- ============================================================== -->
@@ -284,12 +242,142 @@ function filterTable($query)
                 <!-- End Right sidebar -->
                 <!-- ============================================================== -->
             </div>
+		 <form class="form-inline"  method="post" enctype="multipart/form-data" >					
+				<div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="mediumModalLabel">Add Data</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                               <div class="card-body">
+                                <table class="table" width="25%" border="0">
+
+                                    <tbody>
+									<tr>
+                                             <th scope="col">Course Name</th>
+                                             <th scope="col" ><input class="form-control" maxlength="50" type="text" name="coursename"  required></th>
+                                        
+                                        </tr>
+										<tr>
+                                             <th scope="col">Course Code</th>
+                                             <th scope="col" ><input class="form-control" maxlength="8" type="text" name="coursecode"  required></th>
+                                        
+                                        </tr>
+                                        <tr>
+                                             <th scope="col">Test</th>
+                                             <th scope="col" ><input class="form-control" maxlength="2" type="text" name="test"  required></th>
+                                        
+                                        </tr>
+										
+										<tr>
+                                             <th scope="col">Quiz</th>
+                                             <th scope="col" ><input class="form-control" maxlength="2" type="text" name="quiz" required></th>
+                                        
+                                        </tr>
+										
+										<tr>
+                                             <th scope="col">Assignment (COGNITIVE)</th>
+                                             <th scope="col" ><input class="form-control" maxlength="2" type="text" name="assignment" required></th>
+                                        
+                                        </tr>
+										<tr>
+                                             <th scope="col">Lab (PSYCHOMOTOR)</th>
+                                             <th scope="col" ><input class="form-control" maxlength="2" type="text" name="lab" required></th>
+                                        
+                                        </tr>
+										<tr>
+                                             <th scope="col">Project (AFFECTIVE)</th>
+                                             <th scope="col" ><input class="form-control" maxlength="2" type="text" name="projectA" required></th>
+                                        
+                                        </tr>
+										<tr>
+                                             <th scope="col">Project (COGNITIVE)</th>
+                                             <th scope="col" ><input class="form-control" maxlength="2" type="text" name="projectC" required></th>
+                                        
+                                        </tr>
+										<tr>
+                                             <th scope="col">Project (PSYCHOMOTOR)</th>
+                                             <th scope="col" ><input class="form-control" maxlength="2" type="text" name="projectP" required></th>
+                                        
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            </div>
+                            <div class="modal-footer">
+							<input style="border-radius: 8px;" type="submit" class="btn btn-success" value="Add" name="Submit"/>
+							<input style="border-radius: 8px;" type="submit" class="btn btn-primary" value="Back" name="Back"/><a href="years.php"></a>
+							
+                            </div>
+                       </div>
+                    </div>
+                </div>
+				</form>
+				
+<?php
+//including the database connection file
+include_once("config.php");
+$db = db_connect();
+
+$qlist = "SELECT * from examinationresult where matricnumber='".$matricnumber."'"; 
+$reslist = $db->query($qlist);
+
+ while($rowlist = $reslist->fetch_assoc()) {        
+           $matricnumber=$rowlist["matricnumber"];
+        }
+
+if(isset($_POST['Submit'])) { 
+   
+	$coursename = $_POST['coursename'];
+    $coursecode = $_POST['coursecode'];
+    $test = $_POST['test'];
+    $quiz = $_POST['quiz'];
+	$assignment = $_POST['assignment'];
+	$lab = $_POST['lab'];
+	$projectA = $_POST['projectA'];
+	$projectC = $_POST['projectC'];
+	$projectP = $_POST['projectP'];
+				
+	$sum=$test+$quiz+$assignment+$lab+$projectA+$projectC+$projectP;		 			
+
+
+	/*Prevent sql injection*/
+	$coursename = stripcslashes($coursename);
+	$coursecode = stripcslashes($coursecode);
+	$test = stripcslashes($test);
+	$quiz = stripcslashes($quiz);
+	$assignment = stripcslashes($assignment);
+	$lab = stripcslashes($lab);
+	$projectA = stripcslashes($projectA);
+	$projectC = stripcslashes($projectC);
+	$projectP = stripcslashes($projectP);
+	
+	
+	 // Connect to server and select database.
+    $link = mysqli_connect("localhost", "root", "")or die("cannot connect server "); 
+    mysqli_select_db($link, "fyp")or die("cannot select DB");
+
+	$sql = "INSERT INTO examinationresult(matricnumber,coursename,coursecode,test,quiz,assignment,lab,projectA,projectC,projectP,sum)VALUES('$matricnumber','$coursename','$coursecode','$test','$quiz','$assignment','$lab','$projectA','$projectC','$projectP','$sum')";
+
+  $result = mysqli_query($link, $sql)or die("Failed to query database".mysqli_error($link));
+$message = "Insert Successfully.";
+		echo "<script type='text/javascript'>alert('$message');</script>";
+	echo "<script> location.href='years.php?matricnumber=".$_GET['matricnumber']."'; </script>";
+		exit;
+}	?>
             <!-- ============================================================== -->
             <!-- End Container fluid  -->
             <!-- ============================================================== -->
             <!-- ============================================================== -->
             <!-- footer -->
             <!-- ============================================================== -->
+            <footer class="footer text-center">
+
+            </footer>
             <!-- ============================================================== -->
             <!-- End footer -->
             <!-- ============================================================== -->
@@ -318,19 +406,16 @@ function filterTable($query)
     <!--Custom JavaScript -->
     <script src="dist/js/custom.min.js"></script>
     <!-- this page js -->
-    <script src="assets/libs/chart/matrix.interface.js"></script>
-    <script src="assets/libs/chart/excanvas.min.js"></script>
-    <script src="assets/libs/flot/jquery.flot.js"></script>
-    <script src="assets/libs/flot/jquery.flot.pie.js"></script>
-    <script src="assets/libs/flot/jquery.flot.time.js"></script>
-    <script src="assets/libs/flot/jquery.flot.stack.js"></script>
-    <script src="assets/libs/flot/jquery.flot.crosshair.js"></script>
-    <script src="assets/libs/chart/jquery.peity.min.js"></script>
-    <script src="assets/libs/chart/matrix.charts.js"></script>
-    <script src="assets/libs/chart/jquery.flot.pie.min.js"></script>
-    <script src="assets/libs/flot.tooltip/js/jquery.flot.tooltip.min.js"></script>
-    <script src="assets/libs/chart/turning-series.js"></script>
-    <script src="dist/js/pages/chart/chart-page-init.js"></script>
+    <script src="assets/extra-libs/multicheck/datatable-checkbox-init.js"></script>
+    <script src="assets/extra-libs/multicheck/jquery.multicheck.js"></script>
+    <script src="assets/extra-libs/DataTables/datatables.min.js"></script>
+    <script>
+        /****************************************
+         *       Basic Table                   *
+         ****************************************/
+        $('#zero_config').DataTable();
+    </script>
+
 </body>
 
 </html>
